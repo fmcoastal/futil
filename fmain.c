@@ -15,6 +15,7 @@
 #define USE_MENU
 #define USE_SERIAL
 #define USE_SCRIPT
+#undef  USE_SCRIPT
 
 
 #include "ffile.h"
@@ -39,7 +40,7 @@ uint64_t g_main_debug = 0;
 ////////////////////////////////////////////////////////////////////////
 //   Include a CLI MENU
 #ifdef USE_MENU
-void    doMenu(void);
+int     doMenu(void);
 int     g_Menu = 0;         // if = 1, run a Menu interface (do_Menu);
 #endif
 
@@ -71,15 +72,15 @@ char  g_LogFileBase[MAX_DATED_FILE_NAME] = {0};
 char  g_LogFileName[MAX_DATED_FILE_NAME] = {"log"};
 
 
+#ifdef USE_SCRIPT           
 int   RunScriptFile(char * filename);
- 
+#endif 
 
 // the struct below is passed to the two threads. 
 typedef struct 
 {
    int done;
-   int fd;
-
+   ser_hndl_t * pdev;
 }datablock;
 
 //////////////////////////////////////////////////////////////////////
@@ -152,11 +153,13 @@ int main (int argc, char ** argv)
     int i = 0;
     int err;
     datablock db;    
+    ser_hndl_t  serial_device = {0};
+    ser_hndl_t  * p_ser = & serial_device;
     int option;
     int result = 0;
     int UsageFlag = 0;
     
-    char logfile[128] = {0};  // default Log file name
+//    char logfile[128] = {0};  // default Log file name
 
 
 // Initialize Default Values
@@ -248,17 +251,18 @@ while ((option = getopt(argc, argv,"mvrl:b:s:d:t:")) != -1) {
      }
  
 #ifdef USE_SERIAL
-//   Opent the Serial Port
-    fd = open (portname, O_RDWR | O_NOCTTY | O_SYNC);
-    if (fd < 0)
-    {
-        error_message ("error %d opening %s: %s", errno, portname, strerror (errno));
-        return -1;
-    }
-    db.fd = fd;  //  handle for the threads to access serial port.   
+     result = OpenSerialDevice( p_ser ,portname);
+     if ( result != 0) // error Initializing
+     {
+         error_message ("error %d opening %s: %s", errno, portname, strerror (errno));
+         cleanup();
+       return -2;
+     }
+     set_interface_attribs ( p_ser , B115200, 0);  // set speed to 115,200 bps, 88
+     set_blocking ( p_ser , 0);                // set no blocking
 
-    set_interface_attribs (fd, B115200, 0);  // set speed to 115,200 bps, 8n1 (no parity)
-    set_blocking (fd, 0);                // set no blocking
+     // patch up the
+     db.pdev= p_ser;  //  handle for the threads to access serial port.
 
 #endif
 
@@ -321,13 +325,13 @@ int tx(void* arg)
     int r;
 
     printf("Starting Tx Thread\n");
-    printf("  Serial Handle: %d\n",pdb->fd);
+    printf("  Serial Handle: %d\n",pdb->pdev->fd);
     while( pdb->done == 0 )
     {
 #ifdef KEYBOARD
        c = getchar();
 //       printf("%c",c);   // local echo??
-       write (pdb->fd, &c, 1);           // send 7 character greeting
+       write (pdb->pdev->fd, &c, 1);           // send 7 character greeting
        if( c == 0x1b) pdb->done = 1;
 #else
        r = RBuffFetch( g_pTxSerial,(void **) &pc); //fetch value out of ring buffer */
@@ -337,7 +341,7 @@ int tx(void* arg)
            {
                 printf("tx %c  0x%x\n",*pc,*pc);           
            }
-           write (pdb->fd, pc, 1);           // send 7 character greeting
+           write (pdb->pdev->fd, pc, 1);           // send 7 character greeting
        }
        else
        {
@@ -366,7 +370,7 @@ int rx(void* arg)
 
     while( pdb->done == 0) // this will be set by teh back door
     {
-       n = read (pdb->fd, buf, sizeof(buf));  // read up to 100 characters if ready to read
+       n = read (pdb->pdev->fd, buf, sizeof(buf));  // read up to 100 characters if ready to read
        for( i = 0 ; i < n ; i++)
        {
           if ( g_RxThreadDisableRBuff == 0)
@@ -462,7 +466,7 @@ extern int g_StatLoops;
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
-void doMenuMenu(void)
+int doMenuMenu(void)
 {
 printf("\n");
 printf("c             - canned statistics \n");
@@ -492,7 +496,7 @@ char g_MenuPrompt[] ={"Yes?> "};
 #define CMD_BUFFER_SIZE 256
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
-void doMenu(void)
+int doMenu(void)
 {
 int r;
 int d = 0;
@@ -518,7 +522,7 @@ char logFileName[FILE_STRING_LENGTH];
        case 'c':
        case 'C':
            printf("Canned Test \n");
-           doStatistics(); 
+//           doStatistics(); 
  
            // do script file
            break;
@@ -592,9 +596,11 @@ char logFileName[FILE_STRING_LENGTH];
        case 's':
        case 'S':
            printf("Do Script File : not implemented \n");
-           if ( g_argc >= 2 )
+#ifdef USE_SCRIPT
+	   if ( g_argc >= 2 )
               RunScriptFile(g_arg1);
-           break;
+#endif
+	   break;
        case 't':
        case 'T':  
            printf("  Entering  Terminal Server exit...   <ESC Enter> to exit \n");
@@ -607,6 +613,7 @@ char logFileName[FILE_STRING_LENGTH];
        } // end switch
     }  // end while 
 
+    return 0;
 }
 #endif
 
