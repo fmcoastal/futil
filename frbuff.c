@@ -17,6 +17,7 @@
 
 #include <stdlib.h>  // for malloc free & NULL
 //#include <memory.h>  // for memcpy
+#include <string.h>    // for memcpy.
 #define fastmemcpy memcpy
 
 #include <stdio.h>   // for sprintf
