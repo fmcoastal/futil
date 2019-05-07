@@ -1,9 +1,9 @@
 
 #COMPILEFOR = "SE-UM"     # compiled on OII under Debian FS
 #COMPILEFOR = "SE-S"      # X86 SE-S
-#COMPILEFOR = "linux"      # X86 Linux
-COMPILEFOR = "X86_SE_UM" # X86 SE-UM
-COMPILEFOR = "DEBIAN" # Compile on MIPS Debian 
+COMPILEFOR = "linux"      # X86 Linux
+#COMPILEFOR = "X86_SE_UM" # X86 SE-UM
+#COMPILEFOR = "DEBIAN" # Compile on MIPS Debian 
 
 #to add a compile flag  -D<flag>
 CCFLAGS    = -O0 -Wall -c -save-temps -fexceptions   -fasynchronous-unwind-tables -Wall -pthread
@@ -82,29 +82,30 @@ ifeq ($(TMP),DEBIAN)
     CCFLAGS          += -DLINUX
 endif 
 
+MK = Makefile 
 
 all: var main echo  backtrace  
 
 
-main.o:   main.c  Makefile
+main.o:  $(MK) main.c 
 	 $(MPATH)$(CC) $(CCFLAGS) -o main.o main.c
 
-main:  main.o
+main:    $(MK) main.o
 #       BOth of the two following links work
 	 $(MPATH)$(LD) $(LDFLAGS) -L. main.o -Wl,-Bdynamic  -o main
 
 
-backtrace.o:   backtrace.c  Makefile
-	 $(MPATH)$(CC) $(CCFLAGS) -o backtrace.o backtrace.c
+backtrace.o: $(MK) backtrace.c 
+	     $(MPATH)$(CC) $(CCFLAGS) -o backtrace.o backtrace.c
 
-backtrace:  backtrace.o
+backtrace:   $(MK) backtrace.o
 #       BOth of the two following links work
-	 $(MPATH)$(LD) $(LDFLAGS) -L. backtrace.o -Wl,-Bdynamic  -o backtrace
+	     $(MPATH)$(LD) $(LDFLAGS) -L. backtrace.o -Wl,-Bdynamic  -o backtrace
 
-echo.o:   echo.c  Makefile
+echo.o:  $(MK) echo.c  
 	 $(MPATH)$(CC) $(CCFLAGS) -o echo.o echo.c
 
-echo:  echo.o
+echo:    $(MK) echo.o
 #       BOth of the two following links work
 	 $(MPATH)$(LD) $(LDFLAGS) -L. echo.o -Wl,-Bdynamic  -o echo
 
@@ -113,6 +114,7 @@ echo:  echo.o
 clean:
 	rm -rf *.a
 	rm -rf *.i
+	rm -rf *.s
 	rm -rf *.o
 	rm -rf *.map
 	rm -rf main
@@ -121,6 +123,8 @@ clean:
 
 cleanbuild:
 	rm -rf *.a
+	rm -rf *.i
+	rm -rf *.s
 	rm -rf *.o
 	rm -rf *.map
 
