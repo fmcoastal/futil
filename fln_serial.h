@@ -23,7 +23,7 @@
 typedef struct serial_handle_struct{
    int    fd;
    int    exit_thread;
-   char * Device[80];
+   char   Device[80];
  } ser_hndl_t;
 
 
@@ -69,11 +69,7 @@ int getDTR( ser_hndl_t * pdev );
 
 
 
-
-
-
-
-#define SERIAL_EXAMPLE
+//#define SERIAL_EXAMPLE
 #ifdef SERIAL_EXAMPLE
 
 extern pthread_t g_tid[];

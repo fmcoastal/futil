@@ -45,12 +45,7 @@
 int OpenSerialDevice( ser_hndl_t * pdev, char * devStr)
 {
     int  fd;
-    int option;
     char portname[80];
-    char test_file[80];
-    int i = 0;
-    int err;
-    datablock db;
 
 //  Init the data structure
     pdev->fd = 0;
