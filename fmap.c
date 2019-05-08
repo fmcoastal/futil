@@ -47,12 +47,12 @@ int64_t MMapInit(fMmapData_t** pMmapData )
    }
    else
    {
-        buffer                 = *pMmapData;  // Set the
-        buffer->MallocBuffer   = 0 ;          /* Initialization was called with a buffer */
+        buffer                 = *pMmapData;     // Set the
+        buffer->MallocBuffer   = 0 ;             /* Initialization was called with a buffer */
    }
-   buffer->fd                  = 0;          // file handle for /dev/mem 
-   buffer->MappedBaseAddress   = NULL;       // virtual Address Mapped
-   buffer->VirtualAddress      = NULL;       // Mapped address + offset of Target Adddress
+   buffer->fd                  = 0;              // file handle for /dev/mem 
+   buffer->MappedBaseAddress   = NULL;           // virtual Address Mapped
+   buffer->VirtualAddress      = NULL;           // Mapped address + offset of Target Adddress
    buffer->PageSize            = 0;
    buffer->MapAddress          = 0;
    buffer->MapSize             = 0;
@@ -147,9 +147,14 @@ int64_t MMapDelete( fMmapData_t* pMmapData)
 #endif
 #ifdef __linux__
      /* unmap the physical Memory */
-     munmap( pMmapData->MappedBaseAddress , pMmapData->MapSize);
+     /* if for some reason we called init and close back to back Mapped Base Address will be 0
+      * do not call munmap */
+     if (pMmapData->MappedBaseAddress != 0)
+     {     
+         munmap( pMmapData->MappedBaseAddress , pMmapData->MapSize);
+     }
     /* if file handle open, close it */
-    if(pMmapData->fd >= 0)   close(pMmapData->fd);
+    if(pMmapData->fd > 0)   close(pMmapData->fd);
 #endif
 
     /* if we allocated the buffer then free it */
