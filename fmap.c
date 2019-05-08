@@ -241,7 +241,185 @@ int64_t  PhyWrite64(uint64_t Paddr, uint64_t Val)
 
 
 
+int32_t  PhyRead32(uint64_t Paddr, uint32_t *Reg)
+{
+   fMmapData_t* pMPhy = NULL;   // Make sure you set this to NULL
+   int64_t    r;
 
+   printf("%d:%s-%s Function not debugged \n",__LINE__,__FILE__,__FUNCTION__);
+   // Allocate a handle for Reading and Writing Physical Memory
+   r = MMapInit(& pMPhy );
+   if( r != 0)
+   {
+        printf("%d:%s-%s Failed to allocate fMmapData_t Structure  %d\n",__LINE__,__FILE__,__FUNCTION__,(int)r);
+        return r;
+   }
+   // map the Physical Address
+   r =  MMapGetVirtAddress( pMPhy, Paddr,sizeof(int64_t));
+   if( r != 0)
+   {
+        printf("%d:%s-%s Failed to Map physical Address  %d\n",__LINE__,__FILE__,__FUNCTION__,(int)r);
+        MMapDelete(pMPhy);
+        return r;
+   }
+   // Read The Data
+   //
+   *Reg = *((uint64_t *)pMPhy->VirtualAddress);    
+   // Free teh pMPhy handle
+   MMapDelete(pMPhy);
+   return 0;
+}
+
+int32_t  PhyWrite32(uint64_t Paddr, uint32_t Val)
+{
+   fMmapData_t* pMPhy = NULL;   // Make sure you set this to NULL
+   int64_t    r;
+
+   printf("%d:%s-%s Function not debugged \n",__LINE__,__FILE__,__FUNCTION__);
+   // Allocate a handle for Reading and Writing Physical Memory
+   r = MMapInit(& pMPhy );
+   if( r != 0)
+   {
+        printf("%d:%s-%s Failed to allocate fMmapData_t Structure  %d\n",__LINE__,__FILE__,__FUNCTION__,(int)r);
+        return r;
+   }
+   // map the Physical Address
+   r =  MMapGetVirtAddress( pMPhy, Paddr,sizeof(int64_t));
+   if( r != 0)
+   {
+        printf("%d:%s-%s Failed to Map physical Address  %d\n",__LINE__,__FILE__,__FUNCTION__,(int)r);
+        MMapDelete(pMPhy);
+        return r;
+   }
+   // Write The Data
+   //
+   *((uint32_t *)pMPhy->VirtualAddress) = Val;    
+
+   // Free teh pMPhy handle
+   MMapDelete(pMPhy);
+   return 0;
+}
+
+
+int16_t  PhyRead16(uint64_t Paddr, uint16_t *Reg)
+{
+   fMmapData_t* pMPhy = NULL;   // Make sure you set this to NULL
+   int64_t    r;
+   
+   printf("%d:%s-%s Function not debugged \n",__LINE__,__FILE__,__FUNCTION__);
+
+   // Allocate a handle for Reading and Writing Physical Memory
+   r = MMapInit(& pMPhy );
+   if( r != 0)
+   {
+        printf("%d:%s-%s Failed to allocate fMmapData_t Structure  %d\n",__LINE__,__FILE__,__FUNCTION__,(int)r);
+        return r;
+   }
+   // map the Physical Address
+   r =  MMapGetVirtAddress( pMPhy, Paddr,sizeof(int64_t));
+   if( r != 0)
+   {
+        printf("%d:%s-%s Failed to Map physical Address  %d\n",__LINE__,__FILE__,__FUNCTION__,(int)r);
+        MMapDelete(pMPhy);
+        return r;
+   }
+   // Read The Data
+   //
+   *Reg = *((uint16_t *)pMPhy->VirtualAddress);    
+   // Free teh pMPhy handle
+   MMapDelete(pMPhy);
+   return 0;
+}
+
+int16_t  PhyWrite16(uint64_t Paddr, uint16_t Val)
+{
+   fMmapData_t* pMPhy = NULL;   // Make sure you set this to NULL
+   int64_t    r;
+
+   printf("%d:%s-%s Function not debugged \n",__LINE__,__FILE__,__FUNCTION__);
+   // Allocate a handle for Reading and Writing Physical Memory
+   r = MMapInit(& pMPhy );
+   if( r != 0)
+   {
+        printf("%d:%s-%s Failed to allocate fMmapData_t Structure  %d\n",__LINE__,__FILE__,__FUNCTION__,(int)r);
+        return r;
+   }
+   // map the Physical Address
+   r =  MMapGetVirtAddress( pMPhy, Paddr,sizeof(int64_t));
+   if( r != 0)
+   {
+        printf("%d:%s-%s Failed to Map physical Address  %d\n",__LINE__,__FILE__,__FUNCTION__,(int)r);
+        MMapDelete(pMPhy);
+        return r;
+   }
+   // Write The Data
+   //
+   *((uint16_t *)pMPhy->VirtualAddress) = Val;    
+
+   // Free teh pMPhy handle
+   MMapDelete(pMPhy);
+   return 0;
+}
+
+
+int8_t  PhyRead8(uint64_t Paddr, uint8_t *Reg)
+{
+   fMmapData_t* pMPhy = NULL;   // Make sure you set this to NULL
+   int64_t    r;
+
+   printf("%d:%s-%s Function not debugged \n",__LINE__,__FILE__,__FUNCTION__);
+   // Allocate a handle for Reading and Writing Physical Memory
+   r = MMapInit(& pMPhy );
+   if( r != 0)
+   {
+        printf("%d:%s-%s Failed to allocate fMmapData_t Structure  %d\n",__LINE__,__FILE__,__FUNCTION__,(int)r);
+        return r;
+   }
+   // map the Physical Address
+   r =  MMapGetVirtAddress( pMPhy, Paddr,sizeof(int64_t));
+   if( r != 0)
+   {
+        printf("%d:%s-%s Failed to Map physical Address  %d\n",__LINE__,__FILE__,__FUNCTION__,(int)r);
+        MMapDelete(pMPhy);
+        return r;
+   }
+   // Read The Data
+   //
+   *Reg = *((uint8_t *)pMPhy->VirtualAddress);    
+   // Free teh pMPhy handle
+   MMapDelete(pMPhy);
+   return 0;
+}
+
+int8_t  PhyWrite8(uint64_t Paddr, uint8_t Val)
+{
+   fMmapData_t* pMPhy = NULL;   // Make sure you set this to NULL
+   int64_t    r;
+
+   printf("%d:%s-%s Function not debugged \n",__LINE__,__FILE__,__FUNCTION__);
+   // Allocate a handle for Reading and Writing Physical Memory
+   r = MMapInit(& pMPhy );
+   if( r != 0)
+   {
+        printf("%d:%s-%s Failed to allocate fMmapData_t Structure  %d\n",__LINE__,__FILE__,__FUNCTION__,(int)r);
+        return r;
+   }
+   // map the Physical Address
+   r =  MMapGetVirtAddress( pMPhy, Paddr,sizeof(int64_t));
+   if( r != 0)
+   {
+        printf("%d:%s-%s Failed to Map physical Address  %d\n",__LINE__,__FILE__,__FUNCTION__,(int)r);
+        MMapDelete(pMPhy);
+        return r;
+   }
+   // Write The Data
+   //
+   *((uint8_t *)pMPhy->VirtualAddress) = Val;    
+
+   // Free teh pMPhy handle
+   MMapDelete(pMPhy);
+   return 0;
+}
 
 
 

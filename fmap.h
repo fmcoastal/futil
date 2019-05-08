@@ -51,6 +51,16 @@ typedef struct{
 int64_t  PhyRead64(uint64_t Paddr, uint64_t *Reg);
 int64_t  PhyWrite64(uint64_t Paddr, uint64_t Val);
 
+int32_t  PhyRead32(uint64_t Paddr, uint32_t *Reg);
+int32_t  PhyWrite32(uint64_t Paddr, uint32_t Val);
+
+int16_t  PhyRead16(uint64_t Paddr, uint16_t *Reg);
+int16_t  PhyWrite16(uint64_t Paddr, uint16_t Val);
+
+int8_t  PhyRead8(uint64_t Paddr, uint8_t *Reg);
+int8_t  PhyWrite8(uint64_t Paddr, uint8_t Val);
+
+
 
 
 //
